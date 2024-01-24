@@ -11,10 +11,11 @@
 #ifndef GOOGLE_PROTOBUF_INTERNAL_MESSAGE_UTIL_H__
 #define GOOGLE_PROTOBUF_INTERNAL_MESSAGE_UTIL_H__
 
-#include "google/protobuf/message.h"
-
 namespace google {
 namespace protobuf {
+
+class Message;
+
 namespace internal {
 
 // Walks the entire message tree and eager parses all lazy fields.
