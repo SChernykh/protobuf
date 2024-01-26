@@ -69,7 +69,7 @@ TEST_F(CppGeneratorTest, LegacyClosedEnumOnNonEnumField) {
                  R"schema(
     edition = "2023";
     import "google/protobuf/cpp_features.proto";
-    
+
     message Foo {
       int32 bar = 1 [features.(pb.cpp).legacy_closed_enum = true];
     })schema");
@@ -109,7 +109,7 @@ TEST_F(CppGeneratorTest, LegacyClosedEnumInherited) {
     edition = "2023";
     import "google/protobuf/cpp_features.proto";
     option features.(pb.cpp).legacy_closed_enum = true;
-    
+
     enum TestEnum {
       TEST_ENUM_UNKNOWN = 0;
     }
@@ -130,7 +130,7 @@ TEST_F(CppGeneratorTest, LegacyClosedEnumImplicit) {
     edition = "2023";
     import "google/protobuf/cpp_features.proto";
     option features.(pb.cpp).legacy_closed_enum = true;
-    
+
     enum TestEnum {
       TEST_ENUM_UNKNOWN = 0;
     }
@@ -159,8 +159,7 @@ TEST_F(CppGeneratorTest, CtypeOnNoneStringFieldTest) {
       "protocol_compiler --proto_path=$tmpdir --cpp_out=$tmpdir "
       "--experimental_editions foo.proto");
   ExpectErrorSubstring(
-      "Field Foo.bar specifies ctype, but is not "
-      "a string nor bytes field.");
+      "Field Foo.bar specifies ctype, but is not a string nor bytes field.");
 }
 
 TEST_F(CppGeneratorTest, CtypeOnExtensionTest) {
@@ -177,8 +176,8 @@ TEST_F(CppGeneratorTest, CtypeOnExtensionTest) {
       "protocol_compiler --proto_path=$tmpdir --cpp_out=$tmpdir "
       "--experimental_editions foo.proto");
   ExpectErrorSubstring(
-      "Extension bar specifies ctype=CORD which is "
-      "not supported for extensions.");
+      "Extension bar specifies ctype=CORD which is not supported for "
+      "extensions.");
 }
 }  // namespace
 }  // namespace cpp
