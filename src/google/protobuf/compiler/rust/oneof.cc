@@ -302,7 +302,7 @@ void GenerateOneofAccessors(Context& ctx, const OneofDescriptor& oneof,
                  // Optional<> then this conditional behavior should be removed.
                  {"into_mut_transform",
                   field.type() == FieldDescriptor::TYPE_MESSAGE
-                      ? ""
+                      ? ".or_default()"
                       : ".try_into_mut().unwrap()"}},
                 R"rs(
                 $Msg$_::$case_enum_name$::$case$ =>
