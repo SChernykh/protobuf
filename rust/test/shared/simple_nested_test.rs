@@ -10,6 +10,7 @@ use nested_proto::Outer_::InnerMut;
 use nested_proto::Outer_::InnerView;
 use nested_proto::Outer_::Inner_::InnerEnum;
 use nested_proto::*;
+use protobuf::Optional;
 
 #[test]
 fn test_deeply_nested_message() {
@@ -29,6 +30,14 @@ fn test_deeply_nested_enum() {
 
     let outer_msg = Outer::new();
     assert_that!(outer_msg.deep_enum(), eq(JustWayTooInner::Unspecified));
+}
+
+#[test]
+fn test_opt() {
+    let outer_msg = Outer::new();
+    let inner_msg: Optional<InnerView<'_>> = outer_msg.inner_opt();
+    assert_that!(inner_msg.is_set(), eq(false));
+    assert_that!(inner_msg.into_inner().double(), eq(0.0));
 }
 
 #[test]
