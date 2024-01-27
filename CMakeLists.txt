@@ -2,6 +2,15 @@
 # to 3.26.
 cmake_minimum_required(VERSION 3.10...3.26)
 
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+
+set(WITH_PROTOC OFF)
+
 # Revert to old behavior for MSVC debug symbols.
 if(POLICY CMP0141)
   cmake_policy(SET CMP0141 OLD)
@@ -24,27 +33,21 @@ if(protobuf_DEPRECATED_CMAKE_SUBDIRECTORY_USAGE)
 endif()
 
 # Options
-option(protobuf_INSTALL "Install protobuf binaries and files" ON)
-option(protobuf_BUILD_TESTS "Build tests" ON)
+option(protobuf_INSTALL "Install protobuf binaries and files" OFF)
+option(protobuf_BUILD_TESTS "Build tests" OFF)
 option(protobuf_BUILD_CONFORMANCE "Build conformance tests" OFF)
 option(protobuf_BUILD_EXAMPLES "Build examples" OFF)
 option(protobuf_BUILD_PROTOBUF_BINARIES "Build protobuf libraries and protoc compiler" ON)
-option(protobuf_BUILD_PROTOC_BINARIES "Build libprotoc and protoc compiler" ON)
+option(protobuf_BUILD_PROTOC_BINARIES "Build libprotoc and protoc compiler" OFF)
 option(protobuf_BUILD_LIBPROTOC "Build libprotoc" OFF)
 option(protobuf_DISABLE_RTTI "Remove runtime type information in the binaries" OFF)
 option(protobuf_TEST_XML_OUTDIR "Output directory for XML logs from tests." "")
 option(protobuf_ALLOW_CCACHE "Adjust build flags to allow for ccache support." OFF)
-if (BUILD_SHARED_LIBS)
-  set(protobuf_BUILD_SHARED_LIBS_DEFAULT ON)
-else (BUILD_SHARED_LIBS)
-  set(protobuf_BUILD_SHARED_LIBS_DEFAULT OFF)
-endif (BUILD_SHARED_LIBS)
-option(protobuf_BUILD_SHARED_LIBS "Build Shared Libraries" ${protobuf_BUILD_SHARED_LIBS_DEFAULT})
+option(protobuf_BUILD_SHARED_LIBS "Build Shared Libraries" OFF)
 include(CMakeDependentOption)
 cmake_dependent_option(protobuf_MSVC_STATIC_RUNTIME "Link static runtime libraries" ON
   "NOT protobuf_BUILD_SHARED_LIBS" OFF)
-set(protobuf_WITH_ZLIB_DEFAULT ON)
-option(protobuf_WITH_ZLIB "Build with zlib support" ${protobuf_WITH_ZLIB_DEFAULT})
+option(protobuf_WITH_ZLIB "Build with zlib support" OFF)
 set(protobuf_DEBUG_POSTFIX "d"
   CACHE STRING "Default debug postfix")
 mark_as_advanced(protobuf_DEBUG_POSTFIX)
@@ -237,6 +240,22 @@ if (MSVC)
   string(REPLACE "/" "\\" PROTOBUF_BINARY_WIN32_PATH ${protobuf_BINARY_DIR})
   string(REPLACE "." ","  protobuf_RC_FILEVERSION "${protobuf_VERSION}")
 
+  set(GENERAL_FLAGS "/MP /EHa")
+  set(WARNING_FLAGS "/W0")
+  set(SECURITY_FLAGS "/GS /guard:cf")
+  set(OPTIMIZATION_FLAGS "/O1 /Oi /Ob2 /Os /DNDEBUG /GL")
+
+  set(CMAKE_C_FLAGS_DEBUG "${GENERAL_FLAGS} ${WARNING_FLAGS} ${SECURITY_FLAGS} /Od /Ob0 /Zi /MTd")
+  set(CMAKE_CXX_FLAGS_DEBUG "${GENERAL_FLAGS} ${WARNING_FLAGS} ${SECURITY_FLAGS} /Od /Ob0 /Zi /MTd")
+
+  set(CMAKE_C_FLAGS_RELEASE "${GENERAL_FLAGS} ${WARNING_FLAGS} ${SECURITY_FLAGS} ${OPTIMIZATION_FLAGS} /MT")
+  set(CMAKE_CXX_FLAGS_RELEASE "${GENERAL_FLAGS} ${WARNING_FLAGS} ${SECURITY_FLAGS} ${OPTIMIZATION_FLAGS} /MT")
+
+  set(CMAKE_C_FLAGS_RELWITHDEBINFO "${GENERAL_FLAGS} ${WARNING_FLAGS} ${SECURITY_FLAGS} /Ob1 /Ot /Zi /MT")
+  set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${GENERAL_FLAGS} ${WARNING_FLAGS} ${SECURITY_FLAGS} /Ob1 /Ot /Zi /MT")
+
+  set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /LTCG")
+
   if (protobuf_ALLOW_CCACHE)
     # In order to support ccache, we need to remove the /Zi option because it
     # puts debug symbols into separate pdb files (which in incompatible with
@@ -295,7 +314,7 @@ include(${protobuf_SOURCE_DIR}/cmake/abseil-cpp.cmake)
 
 if (protobuf_BUILD_PROTOBUF_BINARIES)
   include(${protobuf_SOURCE_DIR}/cmake/utf8_range.cmake)
-  include(${protobuf_SOURCE_DIR}/cmake/libprotobuf-lite.cmake)
+  #include(${protobuf_SOURCE_DIR}/cmake/libprotobuf-lite.cmake)
   if (NOT DEFINED protobuf_LIB_PROTOBUF_LITE)
     set(protobuf_LIB_PROTOBUF_LITE libprotobuf-lite)
   endif ()
