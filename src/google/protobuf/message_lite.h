@@ -84,7 +84,7 @@ class PROTOBUF_EXPORT CachedSize {
   constexpr CachedSize() noexcept : atom_(Scalar{}) {}
   // NOLINTNEXTLINE(google-explicit-constructor)
   constexpr CachedSize(Scalar desired) noexcept : atom_(desired) {}
-#if PROTOBUF_BUILTIN_ATOMIC
+#ifdef PROTOBUF_BUILTIN_ATOMIC
   constexpr CachedSize(const CachedSize& other) = default;
 
   Scalar Get() const noexcept {
@@ -111,7 +111,7 @@ class PROTOBUF_EXPORT CachedSize {
 #endif
 
  private:
-#if PROTOBUF_BUILTIN_ATOMIC
+#ifdef PROTOBUF_BUILTIN_ATOMIC
   Scalar atom_;
 #else
   std::atomic<Scalar> atom_;

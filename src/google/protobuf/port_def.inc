@@ -580,7 +580,7 @@ static_assert(PROTOBUF_ABSL_MIN(20230125, 3),
 #error PROTOBUF_ATTRIBUTE_WEAK was previously defined
 #endif
 #if ABSL_HAVE_ATTRIBUTE(weak) && !defined(__APPLE__) && \
-    (!defined(_WIN32) || __clang_major__ < 9) && !defined(__MINGW32__)
+    (!defined(_WIN32) || !defined(__clang_major__) || __clang_major__ < 9) && !defined(__MINGW32__)
 #define PROTOBUF_ATTRIBUTE_WEAK __attribute__((weak))
 #define PROTOBUF_HAVE_ATTRIBUTE_WEAK 1
 #else
@@ -736,7 +736,7 @@ static_assert(PROTOBUF_ABSL_MIN(20230125, 3),
 #error PROTOBUF_DESCRIPTOR_WEAK_MESSAGES_ALLOWED was previously defined
 #endif
 #if defined(__GNUC__) && defined(__clang__) && !defined(__APPLE__) && \
-    !defined(_MSC_VER)
+    !defined(_MSC_VER) && !defined(__MINGW32__)
 #define PROTOBUF_DESCRIPTOR_WEAK_MESSAGES_ALLOWED
 #endif
 
