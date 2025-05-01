@@ -274,7 +274,13 @@ inline PROTOBUF_ALWAYS_INLINE const char* TcParser::MiniParse(
   if (entry == nullptr) {
     if (export_called_function) *test_out = {table->fallback, tag};
     data.data = tag;
-    PROTOBUF_MUSTTAIL return table->fallback(PROTOBUF_TC_PARAM_PASS);
+
+    // GCC 15.1.0 says here: "error: cannot tail-call: callee required more stack slots than the caller"
+#if (defined(__clang__) || !defined(__GNUC__) || (__GNUC__ < 15))
+    PROTOBUF_MUSTTAIL
+#endif
+
+    return table->fallback(PROTOBUF_TC_PARAM_PASS);
   }
 
   // The handler may need the tag and the entry to resolve fallback logic. Both
@@ -336,7 +342,12 @@ inline PROTOBUF_ALWAYS_INLINE const char* TcParser::MiniParse(
   TailCallParseFunc parse_fn = kMiniParseTable[field_type];
   if (export_called_function) *test_out = {parse_fn, tag, entry};
 
-  PROTOBUF_MUSTTAIL return parse_fn(PROTOBUF_TC_PARAM_PASS);
+    // GCC 15.1.0 says here: "error: cannot tail-call: callee required more stack slots than the caller"
+#if (defined(__clang__) || !defined(__GNUC__) || (__GNUC__ < 15))
+  PROTOBUF_MUSTTAIL
+#endif
+
+  return parse_fn(PROTOBUF_TC_PARAM_PASS);
 }
 
 PROTOBUF_NOINLINE const char* TcParser::MiniParse(
